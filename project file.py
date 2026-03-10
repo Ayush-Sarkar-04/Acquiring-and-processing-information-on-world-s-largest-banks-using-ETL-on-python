@@ -1,6 +1,4 @@
 # Code for ETL operations on Largest Banks data
-
-# Importing the required libraries
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -8,14 +6,11 @@ import numpy as np
 from datetime import datetime
 import sqlite3
 
-# ---------------- LOG FUNCTION ----------------
 def log_progress(message):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with open("code_log.txt", "a") as f:
         f.write(f"{timestamp} : {message}\n")
 
-
-# ---------------- EXTRACT FUNCTION ----------------
 def extract(url, table_attribs):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "lxml")
@@ -37,8 +32,6 @@ def extract(url, table_attribs):
     df = pd.DataFrame(data, columns=table_attribs)
     return df
 
-
-# ---------------- TRANSFORM FUNCTION ----------------
 def transform(df, csv_path):
     exchange_df = pd.read_csv(csv_path)
 
@@ -54,25 +47,17 @@ def transform(df, csv_path):
 
     return df
 
-
-# ---------------- LOAD TO CSV ----------------
 def load_to_csv(df, output_path):
     df.to_csv(output_path, index=False)
 
-
-# ---------------- LOAD TO DB ----------------
 def load_to_db(df, sql_connection, table_name):
     df.to_sql(table_name, sql_connection, if_exists='replace', index=False)
 
-
-# ---------------- RUN QUERY ----------------
 def run_query(query_statement, sql_connection):
     print(f"\nQuery: {query_statement}")
     result = pd.read_sql(query_statement, sql_connection)
     print(result)
 
-
-# ---------------- MAIN EXECUTION ----------------
 
 url = "https://web.archive.org/web/20230908091635/https://en.wikipedia.org/wiki/List_of_largest_banks"
 table_attribs = ["Name", "MC_USD_Billion"]
@@ -112,3 +97,4 @@ log_progress("Process Complete")
 
 conn.close()
 log_progress("Server Connection closed")
+
